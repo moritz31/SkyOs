@@ -14,7 +14,7 @@ typedef struct multiboot_info {
 	uint32_t syms[4];
 	uint32_t mmap_length;
 	void* mmap_addr;
-} multiboot_info_t;
+}__attribute__((packed)) multiboot_info_t;
 
 typedef struct memory_map {
        uint32_t size;
@@ -25,6 +25,6 @@ typedef struct memory_map {
        uint32_t length_low;
        uint32_t length_high;
        uint32_t type;
-} memory_map_t;
+}__attribute__((packed)) memory_map_t;
 
 #endif
