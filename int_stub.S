@@ -52,10 +52,19 @@ intr_common_handler:
     push %ebx
     push %eax
  
+    //load kernel datasegment
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+
     // Handler aufrufen
     push %esp
     call handle_interrupt
     mov %eax, %esp
+    //load user datasegment
+    mov $0x23, %ax
+    mov %ax, %ds
+    mov %ax, %es
  
     // CPU-Zustand wiederherstellen
     pop %eax

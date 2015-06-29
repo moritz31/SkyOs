@@ -2,6 +2,9 @@
 #include "intr.h"
 #include "console.h"
 
+const uint8_t user_stack_a[4096];
+const uint8_t user_stack_b[4096];
+
 const uint8_t stack_a[4096];
 const uint8_t stack_b[4096];
 
@@ -21,7 +24,7 @@ void task_b() {
 	}
 }
 
-struct cpu_state* init_task(uint8_t* stack, void* task) {
+struct cpu_state* init_task(uint8_t* stack,uint8_t* user_stack, void* task) {
 	
 	//initalize an empty struct 
 	struct cpu_state new_state = {
@@ -34,8 +37,10 @@ struct cpu_state* init_task(uint8_t* stack, void* task) {
 		.ebp = 0,
 
 		.eip = (uint32_t) task,
+		.esp = (uint32_t) user_stack + 4096,
 
-		.cs  = 0x08,
+		.cs  = 0x18 | 0x03,
+		.ss  = 0x20 | 0x03,
 
 		.eflags = 0x202,
 	};
@@ -49,8 +54,8 @@ struct cpu_state* init_task(uint8_t* stack, void* task) {
 }
 
 void init_multitasking() {
-	cpu_states[0] = init_task(stack_a,task_a);
-	cpu_states[1] = init_task(stack_b,task_b);
+	cpu_states[0] = init_task(stack_a,user_stack_a,task_a);
+	cpu_states[1] = init_task(stack_b,user_stack_b,task_b);
 }
 
 

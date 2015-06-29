@@ -1,9 +1,9 @@
-.section multiboot 
-#define MB_ALIGN 1<<0
-#define MB_MEMINFO 1<<1
-#define MB_MAGIC 0x1BADB002
-#define MB_FLAGS MB_ALIGN | MB_MEMINFO
-#define MB_CHECKSUM -(MB_MAGIC + MB_FLAGS)
+.section multiboot
+.set MB_PAGE_ALIGN, 1<<0
+.set MB_MEMORY_INFO,1<<1  
+.set MB_MAGIC, 0x1BADB002
+.set MB_FLAGS, MB_PAGE_ALIGN | MB_MEMORY_INFO
+.set MB_CHECKSUM, -(MB_MAGIC + MB_FLAGS)
  
 // Multiboot header
 .align 4
@@ -21,8 +21,8 @@
 _start:
     //initalize the stack
     mov $kernel_stack, %esp
-    // push multiboot info
-    push %eax; 
+    // push multiboot info 
+    push %eax;
     push %ebx;
     // call the init function
     call init

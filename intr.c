@@ -29,11 +29,13 @@ extern void intr_stub_33(void);
 
 extern void intr_stub_48(void);
 
+uint32_t tss[32] = {0,0 ,0x10};
+
 /************************
 ******* GDT *************
 ************************/
 
-#define GDT_ENTRIES 5
+#define GDT_ENTRIES 6
 
 #define GDT_FLAG_DATASEG  0x02
 #define GDT_FLAG_CODESEG  0x0a
@@ -84,7 +86,8 @@ void init_gdt(void) {
                 GDT_FLAG_CODESEG | GDT_FLAG_4K | GDT_FLAG_PRESENT | GDT_FLAG_RING3);
        	gdt_set_entry(4, 0, 0xfffff, GDT_FLAG_SEGMENT | GDT_FLAG_32_BIT |
                 GDT_FLAG_DATASEG | GDT_FLAG_4K | GDT_FLAG_PRESENT | GDT_FLAG_RING3);
-
+	gdt_set_entry(5, (uint32_t) tss, sizeof(tss), GDT_FLAG_TSS | GDT_FLAG_PRESENT | 		GDT_FLAG_RING3);
+	
 	//set gdt pointer
 	asm volatile("lgdt %0" : : "m" (gdtp));
 	//load gdt
@@ -96,6 +99,9 @@ void init_gdt(void) {
            "ljmp $0x8, $.1;"
            ".1:"
        );
+
+	//reload taskregister
+	asm volatile("ltr %%ax" : : "a" (5 << 3));
 }
 
 static inline void outb(uint16_t port, uint8_t val) {
@@ -237,6 +243,7 @@ struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 
 		if(cpu->intr == 0x20) {
 			new_cpu = schedule(cpu);
+			tss[1] = (uint32_t) (new_cpu + 1);
 		}
 
 		//send end of interrupts
