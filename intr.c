@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "console.h"
 #include "intr.h"
+#include "task.h"
+
 
 extern void intr_stub_0(void);
 extern void intr_stub_1(void);
@@ -31,7 +33,6 @@ extern void intr_stub_48(void);
 ******* GDT *************
 ************************/
 
-
 #define GDT_ENTRIES 5
 
 #define GDT_FLAG_DATASEG  0x02
@@ -48,6 +49,9 @@ extern void intr_stub_48(void);
 
 static uint64_t gdt[GDT_ENTRIES];
 
+/*
+	This function set an right gdt entry based on the input
+*/
 static void gdt_set_entry(int i,unsigned int base, unsigned int limit,int flags) {
 	gdt[i] = limit & 0xffffLL;
         gdt[i] |= (base & 0xffffffLL) << 16;
@@ -57,6 +61,9 @@ static void gdt_set_entry(int i,unsigned int base, unsigned int limit,int flags)
         gdt[i] |= ((base >> 24) & 0xffLL) << 56;
 }
 
+/*
+	Initalize the GDT
+*/	
 void init_gdt(void) {
 	//gdt pointer struct
 	struct {
@@ -99,6 +106,9 @@ static inline void outb(uint16_t port, uint8_t val) {
 ******* PIC *************
 ************************/
 
+/*
+	Initalize the PIC so that the Interrupts start at 0x20
+*/
 void init_pic(void) {
 	
 	//PIC 1 init
@@ -140,6 +150,9 @@ static void init_pit(int freq) {
 
 static uint64_t idt[IDT_ENTRIES];
 
+/*
+	This function set an right idt entry based on the input
+*/
 static void idt_set_entry(int i, void (*fn)(), unsigned int selector, int flags) {
 
 	unsigned long int handler = (unsigned long int) fn;
@@ -150,6 +163,9 @@ static void idt_set_entry(int i, void (*fn)(), unsigned int selector, int flags)
 
 }
 
+/*
+	Initalize idt and activate the interrupts
+*/
 void init_idt(void) {
 	
 	struct {
@@ -209,7 +225,6 @@ void init_idt(void) {
 struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 	//TODO 
 	//create a new cpu struct and save the cpu to them
-	kprintf("%d",cpu->intr);
 	struct cpu_state* new_cpu = cpu;
 
 	if(cpu->intr <= 0x1f) {
@@ -221,7 +236,7 @@ struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 	} else if(cpu->intr >= 0x20 && cpu->intr <= 0x2f) {
 
 		if(cpu->intr == 0x20) {
-			kprintf("Hey dudes");
+			new_cpu = schedule(cpu);
 		}
 
 		//send end of interrupts

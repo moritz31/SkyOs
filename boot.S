@@ -1,9 +1,11 @@
 .section multiboot 
-#define MB_MAGIC 0x1badb002
-#define MB_FLAGS 0x0
+#define MB_ALIGN 1<<0
+#define MB_MEMINFO 1<<1
+#define MB_MAGIC 0x1BADB002
+#define MB_FLAGS MB_ALIGN | MB_MEMINFO
 #define MB_CHECKSUM -(MB_MAGIC + MB_FLAGS)
  
-// Der Multiboot-Header
+// Multiboot header
 .align 4
 .int    MB_MAGIC
 .int    MB_FLAGS
@@ -11,24 +13,23 @@
  
 .section .text
  
-// Init ist eine Funktion aus init.c
+// init function 
 .extern init
 
-// _start muss global sein, damit der Linker es findet und als Einsprungspunkt
-// benutzen kann (alle Labels, die nicht global sind, sind nur in dieser Datei
-// sichtbar)
+//start 
 .global _start
 _start:
-    // Stack initialisieren
+    //initalize the stack
     mov $kernel_stack, %esp
- 
-    // C-Code aufrufen
+    // push multiboot info
+    push %eax; 
+    push %ebx;
+    // call the init function
     call init
  
     jmp .
  
-// 8 kB Stack fuer den Kernel. Das Label steht hinter dem freien Speicher,
-// weil der Stack nach unten waechst
+//8kb stackspace
 .section .bss
 .space 8192
 kernel_stack:

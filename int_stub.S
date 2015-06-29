@@ -55,7 +55,7 @@ intr_common_handler:
     // Handler aufrufen
     push %esp
     call handle_interrupt
-    add $4, %esp
+    mov %eax, %esp
  
     // CPU-Zustand wiederherstellen
     pop %eax
