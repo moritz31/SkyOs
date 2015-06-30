@@ -3,23 +3,18 @@
 #include "intr.h"
 #include "multiboot.h"
 #include "task.h"
+#include "memorymanager.h"
 
+#define NULL 0
 
-void init(multiboot_info_t* mbd, unsigned long magic)
+void init(multiboot_info_t* mb_info, unsigned long magic)
 {
-   
-
     clear_screen();
-    kprintf("%x\n",mbd->mmap_addr);
-    kprintf("%x\n",mbd->mmap_length);
-    if(mbd->flags & (1 << 6)) {
-      memory_map_t* mmap = (void*)mbd->mmap_addr;
-      kprintf("%d + %d\n",mbd->mmap_addr, mbd->mmap_length);
-      while((void*)mmap < mbd->mmap_addr + mbd->mmap_length) {
-        kprintf("0x%x - 0x%x | %d\n",mmap->base_addr_low, mmap->length_low,mmap->type);
-	mmap = (memory_map_t*) ( (unsigned int)mmap + mmap->size + sizeof(unsigned int));
-      }
-    }
+
+    //initalize the memory manager
+    init_memory_manager(mb_info);
+    //clean the multiboot info after it isn't needed anymore
+    mb_info = NULL;
 
     kprintf("Initalizing GDT...\n");
     init_gdt();
