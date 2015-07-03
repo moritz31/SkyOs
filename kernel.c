@@ -5,6 +5,7 @@
 #include "multiboot.h"
 #include "task.h"
 #include "memorymanager.h"
+#include "serial.h"
 
 void init(multiboot_info_t* mb_info, unsigned long magic)
 {
@@ -21,4 +22,5 @@ void init(multiboot_info_t* mb_info, unsigned long magic)
     kprintf("Initalizing IDT...\n");
     init_idt();
     init_multitasking();
+    init_serial(COM1);
 }
