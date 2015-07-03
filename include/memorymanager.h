@@ -6,14 +6,10 @@
 
 #define BLOCK_SIZE 4096
 
-struct stack {
-	uint32_t  addr;
-	
-
-} __attribute__((packed)) stack_t;
+#define NULL ((void*) 0)
 
 void init_memory_manager(multiboot_info_t* mb_info);
-void push_stack(uint32_t addr);
-void pop_stack(uint32_t addr);
+void free(void* page);
+uint32_t alloc();
 
 #endif

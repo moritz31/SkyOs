@@ -13,6 +13,7 @@ SECTIONS
      */
     . = 0x100000;
 
+    kernel_start = .;
     /*
      * Der Multiboot-Header muss zuerst kommen (in den ersten 8 kB).
      * Die Standardsektionen einfach hintereinander weg einbinden.
@@ -30,4 +31,6 @@ SECTIONS
     .bss ALIGN(4096) : {
         *(.bss)
     }
+    . = ALIGN(4096);
+    kernel_end = .;
 }

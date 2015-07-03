@@ -1,31 +1,26 @@
 #include <stdint.h>
+#include <string.h>
 #include "intr.h"
 #include "console.h"
-
-const uint8_t user_stack_a[4096];
-const uint8_t user_stack_b[4096];
-
-const uint8_t stack_a[4096];
-const uint8_t stack_b[4096];
-
-int currentTask = -1;
-int numberOfTasks = 0;
-struct cpu_state* cpu_states[2];
+#include "task.h"
 
 void task_a() {
 	while(1) {
-		kprintf("A");
+		kprintf("Hallo\n");
 	}
 }
 
 void task_b() {
 	while(1) {
-		kprintf("B");
+		kprintf("Penis");
 	}
 }
 
-struct cpu_state* init_task(uint8_t* stack,uint8_t* user_stack, void* task) {
+struct task* init_task(void* entry) {
 	
+	uint8_t* stack = alloc();
+	uint8_t* user_stack = alloc();
+
 	//initalize an empty struct 
 	struct cpu_state new_state = {
 		.eax = 0,
@@ -36,39 +31,50 @@ struct cpu_state* init_task(uint8_t* stack,uint8_t* user_stack, void* task) {
 		.edi = 0,
 		.ebp = 0,
 
-		.eip = (uint32_t) task,
+		.eip = (uint32_t) entry,
 		.esp = (uint32_t) user_stack + 4096,
 
 		.cs  = 0x18 | 0x03,
 		.ss  = 0x20 | 0x03,
 
-		.eflags = 0x202,
+		.eflags = 0x200,
 	};
 	
 	struct cpu_state* state = (void*) (stack + 4096 - sizeof(new_state));
 	*state = new_state;
 
-	numberOfTasks++;	
+	struct task* task = alloc();
+	task->cpu_state = state;
+	task->next = first_task;
+	first_task = task;	
 
-	return state;
+	return task;
 }
 
 void init_multitasking() {
-	cpu_states[0] = init_task(stack_a,user_stack_a,task_a);
-	cpu_states[1] = init_task(stack_b,user_stack_b,task_b);
+	init_task(task_a);
+	init_task(task_b);
 }
 
 
 
-struct cpu_state* schedule(struct cpu_state* actual_state) {
+struct cpu_state* schedule(struct cpu_state* current_cpu) {
 
-	if(currentTask >= 0) {
-		cpu_states[currentTask] = actual_state;
+	if(current_task != NULL) {
+		current_task->cpu_state = current_cpu;
 	}
 
-	currentTask++;
-	currentTask %= numberOfTasks;
+	if(current_task == NULL) {
+		current_task = first_task;
+	} else {
+		current_task = current_task->next;
+		if(current_task == NULL) {
+			current_task = first_task;
+		}
+	}
 
-	return cpu_states[currentTask];
+	current_cpu = current_task->cpu_state;
+
+	return current_cpu;
 
 }

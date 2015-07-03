@@ -2,5 +2,5 @@
 #include "stdarg.h"
 
 void clear_screen(void);
-int kprintf(const char* fmt, ...);
+void kprintf(const char* fmt, ...);
 
