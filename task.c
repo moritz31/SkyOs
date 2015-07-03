@@ -3,6 +3,10 @@
 #include "intr.h"
 #include "console.h"
 #include "task.h"
+#include "memorymanager.h"
+
+static struct task* first_task = NULL;
+static struct task* current_task = NULL;
 
 void task_a() {
 	while(1) {
@@ -18,8 +22,8 @@ void task_b() {
 
 struct task* init_task(void* entry) {
 	
-	uint8_t* stack = alloc();
-	uint8_t* user_stack = alloc();
+	uint8_t* stack = (void*) alloc();
+	uint8_t* user_stack = (void*) alloc();
 
 	//initalize an empty struct 
 	struct cpu_state new_state = {
@@ -43,7 +47,7 @@ struct task* init_task(void* entry) {
 	struct cpu_state* state = (void*) (stack + 4096 - sizeof(new_state));
 	*state = new_state;
 
-	struct task* task = alloc();
+	struct task* task = (void*) alloc();
 	task->cpu_state = state;
 	task->next = first_task;
 	first_task = task;	
@@ -52,8 +56,8 @@ struct task* init_task(void* entry) {
 }
 
 void init_multitasking() {
-	init_task(task_a);
-	init_task(task_b);
+	//init_task(task_a);
+	//init_task(task_b);
 }
 
 

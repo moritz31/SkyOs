@@ -6,8 +6,8 @@
 #define BLOCKS 31250
 static uint32_t BITMAP[BLOCKS];
 
-extern const void kernel_start;
-extern const void kernel_end;
+extern void* kernel_start;
+extern void* kernel_end;
 
 static void mark_used(void* page);
 
@@ -15,8 +15,8 @@ void init_memory_manager(multiboot_info_t* mb_info) {
 
 	kprintf("Initalizing memory ... \n");
 	//get start and end of the mmap
-	memory_map_t* mmap = mb_info->mmap_addr;
-	memory_map_t* mmap_end = mb_info->mmap_addr + mb_info->mmap_length;
+	memory_map_t* mmap = (void*) mb_info->mmap_addr;
+	memory_map_t* mmap_end = (void*) mb_info->mmap_addr + mb_info->mmap_length;
 	
 	//set BITMAP to 0 all blocks are full
 	memset(BITMAP, 0, sizeof(BITMAP));
@@ -37,8 +37,8 @@ void init_memory_manager(multiboot_info_t* mb_info) {
 
 
 		//kernel must be set blocked seperatly
-		uint32_t kernel_addr = &kernel_start;
-		while(kernel_addr < &kernel_end) {
+		uint32_t kernel_addr = (uint32_t)kernel_start;
+		while((void*)kernel_addr < kernel_end) {
 			mark_used((void*)kernel_addr);
 			kernel_addr += 4096;
 		}

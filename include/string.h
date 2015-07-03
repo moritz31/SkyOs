@@ -1,7 +1,7 @@
 #ifndef STRING_H
 #define STRING_H
 
-#define NULL ((void*) 0)
+#define NULL 0
 
 #include <stdint.h>
 

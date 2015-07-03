@@ -1,11 +1,10 @@
 #include "console.h"
-#include "stdint.h"
+#include <stdint.h>
+#include <string.h>
 #include "intr.h"
 #include "multiboot.h"
 #include "task.h"
 #include "memorymanager.h"
-
-#define NULL 0
 
 void init(multiboot_info_t* mb_info, unsigned long magic)
 {
