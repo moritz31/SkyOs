@@ -37,6 +37,9 @@ intr_stub 18
 //IRQ's
 intr_stub 32
 intr_stub 33
+intr_stub 34
+intr_stub 35
+intr_stub 36
 
 //Syscalls
 intr_stub 48

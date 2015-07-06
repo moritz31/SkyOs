@@ -8,9 +8,9 @@
 #define COM3 0x3E8
 #define COM4 0x2E8
 
-void init_serial(uint32_t port);
-void writeData(uint8_t data);
-uint8_t getData();
+void init_serial();
+void writeData(char data);
+char readData();
 
 
 #endif

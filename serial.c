@@ -1,5 +1,7 @@
 #include "serial.h"
 
+#define PORT COM1
+
 static inline void outb(uint16_t port, uint8_t val) {
 	asm volatile ( "outb %0, %1" : : "a" (val), "Nd" (port));
 }
@@ -13,23 +15,29 @@ static inline uint8_t inb(uint16_t port)
 }
 
 
-void init_serial(uint32_t port) {
-	outb(port + 1, 0x00);
-	outb(port + 3, 0x80);
-	outb(port + 0, 0x03);
-	outb(port + 1, 0x00);
-	outb(port + 3, 0x03);
-	outb(port + 2, 0xC7);
-	outb(port + 4, 0x0B);
+void init_serial() {
+	outb(PORT + 1, 0x00);
+	outb(PORT + 3, 0x80);
+	outb(PORT + 0, 0x03);
+	outb(PORT + 1, 0x00);
+	outb(PORT + 3, 0x03);
+	outb(PORT + 2, 0xC7);
+	outb(PORT + 4, 0x0B);
 }
 
-int isWriteable() {
-	//5th Bit AND 1 
-	return inb(port + 5) & 0x20;
+uint8_t get_lsb() {
+	return inb(PORT + 5);
 }
 
-void writeData(char data) {
-	while(isWriteable() == 0) {
-		outb(port, a);
+void writeCharacter(char data) {
+	//kprintf("%d\n",(get_lsb() & (1 << 5)) != 0);
+	if((get_lsb() & (1 << 5)) != 0) {
+		outb(PORT, data);
+	}
+}
+
+char readCharacter() {
+	if(get_lsb() & 1) {
+		return inb(PORT);
 	}
 }

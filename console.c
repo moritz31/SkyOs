@@ -1,4 +1,5 @@
 #include "console.h"
+#include "serial.h"
 
 //position on the screen
 static int x = 0;
@@ -10,6 +11,10 @@ static char* video = (char*) 0xb8000;
 //defines screen width and height 
 const int SCREEN_WIDTH = 80;
 const int SCREEN_HEIGHT= 25;
+
+static inline void outb(uint16_t port, uint8_t val) {
+	asm volatile ( "outb %0, %1" : : "a" (val), "Nd" (port));
+}
 
 /*
 The function clear the screen by deleting every character
@@ -30,6 +35,8 @@ static void kputc(char c)
         x = 0;
         y++;
     }
+
+    writeCharacter(c);
 
     if (c == '\n') {
         return;

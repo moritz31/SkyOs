@@ -8,6 +8,12 @@
 static struct task* first_task = NULL;
 static struct task* current_task = NULL;
 
+void idle_task() {
+	while(1) {
+
+	}
+}
+
 void task_a() {
 	while(1) {
 		kprintf("Hallo\n");
@@ -16,7 +22,7 @@ void task_a() {
 
 void task_b() {
 	while(1) {
-		kprintf("Penis");
+		kprintf("Welt \n");
 	}
 }
 
@@ -58,6 +64,7 @@ struct task* init_task(void* entry) {
 void init_multitasking() {
 	//init_task(task_a);
 	//init_task(task_b);
+	init_task(idle_task);
 }
 
 

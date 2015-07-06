@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "console.h"
 #include "intr.h"
+#include "serial.h"
 #include "task.h"
 
 
@@ -24,8 +25,11 @@ extern void intr_stub_16(void);
 extern void intr_stub_17(void);
 extern void intr_stub_18(void);
 
-extern void intr_stub_32(void);
-extern void intr_stub_33(void);
+extern void intr_stub_32(void);//PIT
+extern void intr_stub_33(void);//Keyboard
+extern void intr_stub_34(void);//Cascade
+extern void intr_stub_35(void);//COM2
+extern void intr_stub_36(void);//COM1
 
 extern void intr_stub_48(void);
 
@@ -185,7 +189,7 @@ void init_idt(void) {
 	//init the pic to set the right irq numbers
 	init_pic();
 
-	init_pit(1);
+	//init_pit(1);
 
 	//Exception-Handler
 	idt_set_entry(0,intr_stub_0, 0x8, IDT_FLAG_INTERRUPT_GATE | IDT_FLAG_RING0 | IDT_FLAG_PRESENT);
@@ -211,6 +215,9 @@ void init_idt(void) {
 	//IRQ-Handler
 	idt_set_entry(32,intr_stub_32, 0x8, IDT_FLAG_INTERRUPT_GATE | IDT_FLAG_RING0 | IDT_FLAG_PRESENT);
 	idt_set_entry(33,intr_stub_33, 0x8, IDT_FLAG_INTERRUPT_GATE | IDT_FLAG_RING0 | IDT_FLAG_PRESENT);
+	idt_set_entry(34,intr_stub_34, 0x8, IDT_FLAG_INTERRUPT_GATE | IDT_FLAG_RING0 | IDT_FLAG_PRESENT);
+	idt_set_entry(35,intr_stub_35, 0x8, IDT_FLAG_INTERRUPT_GATE | IDT_FLAG_RING0 | IDT_FLAG_PRESENT);
+	idt_set_entry(36,intr_stub_35, 0x8, IDT_FLAG_INTERRUPT_GATE | IDT_FLAG_RING0 | IDT_FLAG_PRESENT);
 
 	//Syscalls
 	idt_set_entry(48,intr_stub_48, 0x8, IDT_FLAG_INTERRUPT_GATE | IDT_FLAG_RING3 | IDT_FLAG_PRESENT);
@@ -240,6 +247,8 @@ struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 			asm volatile("cli; hlt");
 		}
 	} else if(cpu->intr >= 0x20 && cpu->intr <= 0x2f) {
+
+		//kprintf("Interrupt %d", cpu->intr);
 
 		if(cpu->intr == 0x20) {
 			new_cpu = schedule(cpu);
