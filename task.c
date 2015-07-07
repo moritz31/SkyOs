@@ -56,7 +56,10 @@ struct task* init_task(void* entry) {
 	struct task* task = (void*) alloc();
 	task->cpu_state = state;
 	task->next = first_task;
-	first_task = task;	
+	first_task = task;
+
+	//create a new memory_context
+	task->context = create_context();
 
 	return task;
 }
@@ -69,7 +72,7 @@ void init_multitasking() {
 
 
 
-struct cpu_state* schedule(struct cpu_state* current_cpu) {
+struct task* schedule(struct cpu_state* current_cpu) {
 
 	if(current_task != NULL) {
 		current_task->cpu_state = current_cpu;
@@ -85,7 +88,7 @@ struct cpu_state* schedule(struct cpu_state* current_cpu) {
 	}
 
 	current_cpu = current_task->cpu_state;
-
-	return current_cpu;
+	
+	return current_task;
 
 }

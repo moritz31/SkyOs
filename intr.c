@@ -238,7 +238,8 @@ void init_idt(void) {
 struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 	//TODO 
 	//create a new cpu struct and save the cpu to them
-	struct cpu_state* new_cpu = cpu;
+	struct task* new_cpu;
+	new_cpu->cpu_state = cpu;
 
 	if(cpu->intr <= 0x1f) {
 		kprintf("Exception %d, kernel stopped!\n", cpu->intr);
@@ -269,9 +270,12 @@ struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 			asm volatile("cli; hlt");
 		}
 	}
-	
+
+	/*if(cpu != new_cpu->cpu_state) {
+		asm volatile("mov %0, %%cr3" : : "r" (new_cpu->context->pagedirectory));
+	}*/
 	//return the new cpu, which can be the old one inf not scheduled
-	return new_cpu;
+	return new_cpu->cpu_state;
 
 }
 

@@ -81,3 +81,7 @@ uint32_t alloc() {
 	//no page found
 	return NULL;
 }
+
+uint32_t* get_bitmap(int i) {
+	return BITMAP[i];
+}
