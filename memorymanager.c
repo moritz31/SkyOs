@@ -6,8 +6,8 @@
 #define BLOCKS 31250
 static uint32_t BITMAP[BLOCKS];
 
-extern void* kernel_start;
-extern void* kernel_end;
+extern const void kernel_start;
+extern const void kernel_end;
 
 static void mark_used(void* page);
 
@@ -37,8 +37,9 @@ void init_memory_manager(multiboot_info_t* mb_info) {
 
 
 		//kernel must be set blocked seperatly
-		uint32_t kernel_addr = (uint32_t)kernel_start;
-		while((void*)kernel_addr < kernel_end) {
+		uint32_t kernel_addr = &kernel_start;
+		kprintf("%d\n",kernel_addr);
+		while((void*)kernel_addr < &kernel_end) {
 			mark_used((void*)kernel_addr);
 			kernel_addr += 4096;
 		}
