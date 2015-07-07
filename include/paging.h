@@ -9,6 +9,8 @@ struct virtual_context {
 };
 
 void init_paging();
+uint32_t virtual_alloc();
+void set_current_context(struct virtual_context* context);
 struct virtual_context* create_context();
 
 

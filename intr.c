@@ -271,9 +271,10 @@ struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 		}
 	}
 
-	/*if(cpu != new_cpu->cpu_state) {
+	if(cpu != new_cpu->cpu_state) {
 		asm volatile("mov %0, %%cr3" : : "r" (new_cpu->context->pagedirectory));
-	}*/
+		set_current_context(new_cpu);
+	}
 	//return the new cpu, which can be the old one inf not scheduled
 	return new_cpu->cpu_state;
 

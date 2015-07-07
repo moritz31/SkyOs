@@ -38,7 +38,6 @@ void init_memory_manager(multiboot_info_t* mb_info) {
 
 		//kernel must be set blocked seperatly
 		uint32_t kernel_addr = &kernel_start;
-		kprintf("%d\n",kernel_addr);
 		while((void*)kernel_addr < &kernel_end) {
 			mark_used((void*)kernel_addr);
 			kernel_addr += 4096;
