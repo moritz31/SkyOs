@@ -29,8 +29,8 @@ void task_b() {
 
 struct task* init_task(void* entry) {
 	
-	uint8_t* stack = (void*) virtual_alloc();
-	uint8_t* user_stack = (void*) virtual_alloc();
+	uint8_t* stack = (void*) alloc();
+	uint8_t* user_stack = (void*) alloc();
 
 	//initalize an empty struct 
 	struct cpu_state new_state = {
@@ -54,7 +54,7 @@ struct task* init_task(void* entry) {
 	struct cpu_state* state = (void*) (stack + 4096 - sizeof(new_state));
 	*state = new_state;
 	
-	struct task* task = (void*) virtual_alloc();
+	struct task* task = (void*) alloc();
 	task->cpu_state = state;
 	task->next = first_task;
 	first_task = task;

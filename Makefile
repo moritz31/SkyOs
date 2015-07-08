@@ -1,8 +1,8 @@
-SRCS = $(shell find -name '*.[cS]')
+SRCS = $(shell find -H *.[cS])
 OBJS = $(addsuffix .o,$(basename $(SRCS)))
 
-CC = x86_64-elf-gcc
-LD = x86_64-elf-ld
+CC = i686-elf-gcc
+LD = i686-elf-ld
 
 ASFLAGS = -m32
 CFLAGS = -m32 -Wall -g -fno-stack-protector -nostdinc -Iinclude

@@ -116,6 +116,3 @@ uint32_t virtual_alloc() {
 	return virt_addr;
 	
 }
-
-
-
