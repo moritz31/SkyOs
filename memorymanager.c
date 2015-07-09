@@ -82,6 +82,6 @@ uint32_t alloc() {
 	return NULL;
 }
 
-uint32_t* get_bitmap(int i) {
+uint32_t get_bitmap(int i) {
 	return BITMAP[i];
 }

@@ -4,7 +4,6 @@
 #include "console.h"
 #include "task.h"
 #include "memorymanager.h"
-#include "paging.h"
 
 static struct task* first_task = NULL;
 static struct task* current_task = NULL;
@@ -23,14 +22,14 @@ void task_a() {
 
 void task_b() {
 	while(1) {
-		kprintf("Welt \n");
+		kprintf("Welt\n");
 	}
 }
 
 struct task* init_task(void* entry) {
 	
-	uint8_t* stack = (void*) alloc();
-	uint8_t* user_stack = (void*) alloc();
+	uint8_t* stack =  (void*)alloc();
+	uint8_t* user_stack = (void*)alloc();
 
 	//initalize an empty struct 
 	struct cpu_state new_state = {
@@ -59,25 +58,23 @@ struct task* init_task(void* entry) {
 	task->next = first_task;
 	first_task = task;
 
-	//create a new memory_context
-	task->context = create_context();
-
 	return task;
 }
 
 void init_multitasking() {
-	//init_task(task_a);
-	//init_task(task_b);
+	init_task(task_a);
+	init_task(task_b);
 	init_task(idle_task);
 }
 
 
 
-struct task* schedule(struct cpu_state* current_cpu) {
+struct cpu_state* schedule(struct cpu_state* cpu) {
+	
 	if(current_task != NULL) {
-		current_task->cpu_state = current_cpu;
+		current_task->cpu_state = cpu;
 	}
-
+	
 	if(current_task == NULL) {
 		current_task = first_task;
 	} else {
@@ -86,9 +83,8 @@ struct task* schedule(struct cpu_state* current_cpu) {
 			current_task = first_task;
 		}
 	}
-
-	current_cpu = current_task->cpu_state;
 	
-	return current_task;
+	cpu = current_task->cpu_state;
+	return cpu;
 
 }

@@ -12,7 +12,8 @@ struct task {
 
 struct task* init_task(void* entry);
 void init_multitasking();
-struct task* schedule(struct cpu_state* actualy_state);
+struct cpu_state* schedule(struct cpu_state* cpu);
+void switchContext();
 
 
 

@@ -189,7 +189,7 @@ void init_idt(void) {
 	//init the pic to set the right irq numbers
 	init_pic();
 
-	//init_pit(1);
+	init_pit(1);
 
 	//Exception-Handler
 	idt_set_entry(0,intr_stub_0, 0x8, IDT_FLAG_INTERRUPT_GATE | IDT_FLAG_RING0 | IDT_FLAG_PRESENT);
@@ -238,8 +238,7 @@ void init_idt(void) {
 struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 	//TODO 
 	//create a new cpu struct and save the cpu to them
-	struct task* new_cpu;
-	new_cpu->cpu_state = cpu;
+	struct cpu_state* new_cpu = cpu;
 
 	if(cpu->intr <= 0x1f) {
 		kprintf("Exception %d, kernel stopped!\n", cpu->intr);
@@ -270,13 +269,9 @@ struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 			asm volatile("cli; hlt");
 		}
 	}
-
-	if(cpu != new_cpu->cpu_state) {
-		asm volatile("mov %0, %%cr3" : : "r" (new_cpu->context->pagedirectory));
-		set_current_context(new_cpu);
-	}
+	
 	//return the new cpu, which can be the old one inf not scheduled
-	return new_cpu->cpu_state;
+	return new_cpu;
 
 }
 
