@@ -24,4 +24,5 @@ void init(multiboot_info_t* mb_info, unsigned long magic)
     kprintf("Initalizing IDT...\n");
     init_idt();
     init_multitasking();
+    test();
 }

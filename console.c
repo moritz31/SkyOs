@@ -16,14 +16,31 @@ static inline void outb(uint16_t port, uint8_t val) {
 	asm volatile ( "outb %0, %1" : : "a" (val), "Nd" (port));
 }
 
+void update_cursor(int row, int col)
+ {
+    unsigned short position=(row*80) + col;
+    
+    // cursor LOW port to vga INDEX register
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (unsigned char)(position&0xFF));
+    // cursor HIGH port to vga INDEX register
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (unsigned char )((position>>8)&0xFF));
+ }
+ 
 /*
 The function clear the screen by deleting every character
 */
+void test() {
+    kprintf("%d,%d",x,y);
+}
+
 void clear_screen(void) {
 	//loop through all characteres
-	for(int i = 0; i < SCREEN_WIDTH*SCREEN_HEIGHT*2;i++) {
+	for(int i = 0; i < SCREEN_WIDTH*SCREEN_HEIGHT*2;i+= 2) {
 		//clear the characteres
 		video[i] = 0;
+        video[i+1] = 0x07;
 	}
 	//set pointer position to zero
 	x = y = 0;
@@ -56,8 +73,23 @@ void kputc(char c)
 
     video[2 * (y * 80 + x)] = c;
     video[2 * (y * 80 + x) + 1] = 0x07;
-
+    
     x++;
+    update_cursor(y,x);
+}
+
+void kdelc() {
+    video[2 * (y * 80 + x)] = 0;
+    video[2 * (y * 80 +x) + 1] = 0x07;
+    
+    x--;
+    if(x == 0) {
+        if(y != 0) {
+            y--;
+            x = 80;
+        }
+    }
+    update_cursor(y,x);
 }
 
 static void kputs(const char* s) {
