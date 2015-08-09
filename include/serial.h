@@ -10,6 +10,7 @@
 
 void init_serial();
 void writeData(char data);
+void writeCharacter(char data);
 char readData();
 
 

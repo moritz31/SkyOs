@@ -29,7 +29,7 @@ void clear_screen(void) {
 	x = y = 0;
 }
 
-static void kputc(char c)
+void kputc(char c)
 {
     if ((c == '\n') || (x > 79)) {
         x = 0;
