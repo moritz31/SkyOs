@@ -3,6 +3,7 @@
 #include "intr.h"
 #include "serial.h"
 #include "task.h"
+#include "keyboard.h"
 
 
 extern void intr_stub_0(void);
@@ -253,6 +254,10 @@ struct cpu_state* handle_interrupt(struct cpu_state* cpu) {
 		if(cpu->intr == 0x20) {
 			new_cpu = schedule(cpu);
 			tss[1] = (uint32_t) (new_cpu + 1);
+		}
+		
+		if(cpu->intr == 0x21) {
+			keyboard_handler();
 		}
 
 		//send end of interrupts

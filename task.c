@@ -62,8 +62,8 @@ struct task* init_task(void* entry) {
 }
 
 void init_multitasking() {
-	init_task(task_a);
-	init_task(task_b);
+	//init_task(task_a);
+	//init_task(task_b);
 	init_task(idle_task);
 }
 
