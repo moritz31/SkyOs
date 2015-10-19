@@ -36,7 +36,6 @@ void send_command(uint8_t command) {
 void waitForResponse() {
 	while (!(inb(0x64) & 0x1)) {}	
 	uint8_t response = inb(0x60);
-	kprintf("%x",response);
 }
 
 char decodeScanCode(uint8_t scan_code) {
@@ -234,18 +233,18 @@ void keyboard_handler() {
 	//handle key up key down
 	if(scan_code & (1 << 7)) {
 		//shift key released
-		if(scan_code == 0xaa || scan_code == 0xb6) {
+		if(scan_code == 0xaa || scan_code == 0xb6) { //shift key released
 			shift_active = !shift_active;
 		}
 	} else {
 		//key pressed
 		
-		//shift key pressed
-		if(scan_code == 0x2a || scan_code == 0x36) {
+		
+		if(scan_code == 0x2a || scan_code == 0x36) { //shift key pressed
 			shift_active = !shift_active;
-		} else if(scan_code == 0x3a) {
+		} else if(scan_code == 0x3a) { //capslock toogle
 			shift_active = !shift_active;
-		} else if(scan_code == 0x0e) {
+		} else if(scan_code == 0x0e) { // Backspace pressed
 			kdelc();
 		} else {
 			char key = decodeScanCode(scan_code);
