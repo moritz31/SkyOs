@@ -1,23 +1,43 @@
-SRCS = $(shell find -H *.[cS])
-OBJS = $(addsuffix .o,$(basename $(SRCS)))
+SRCDIR   = kernel/src
+INCLUDEDIR = kernel/include
+OBJDIR    = obj
+BINDIR = bin
+
+CFILES := $(foreach dir, $(SRCDIR)/, $(notdir $(wildcard $(SRCDIR)/*.c)))
+ASMFILES := $(foreach dir, $(SRCDIR)/, $(notdir $(wildcard $(SRCDIR)/*.S)))
+OBJS := $(addprefix $(OBJDIR)/, $(CFILES:.c=.o) $(ASMFILES:.S=.o))
 
 CC = i686-elf-gcc
 LD = i686-elf-ld
 
 ASFLAGS = -m32
-CFLAGS = -m32 -Wall -g -fno-stack-protector -nostdinc -Iinclude
+CFLAGS = -m32 -Wall -g -fno-stack-protector -nostdinc -I$(INCLUDEDIR)
 LDFLAGS = -melf_i386 -Tlinker.ld
 
-kernel: $(OBJS)
+TARGET = kernel.elf
+
+$(BINDIR)/$(TARGET): $(OBJS)
+	@mkdir -p $(BINDIR)
 	$(LD) $(LDFLAGS) -o $@ $^
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $^
+kernel.elf: $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^
 
-%.o: %.S
-	$(CC) $(ASFLAGS) -c -o $@ $^
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(OBJDIR)
+	$(info ======  $< ---> $@)
+	@$(CC) $(CFLAGS) -c $< -o $@
 
-clean:
-	rm $(OBJS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.S
+	@mkdir -p $(OBJDIR)
+	$(info ======  $< ---> $@)
+	@$(CC) $(ASFLAGS) -c $< -o $@
 
 .PHONY: clean
+clean:
+	@rm -r $(OBJDIR)
+	@rm -r $(BINDIR)
+
+.PHONY: debug
+debug: $(BINDIR)/$(TARGET)
+	qemu-system-i386 -m 256 -serial stdio -kernel $<
