@@ -31,6 +31,10 @@ void update_cursor(int row, int col)
 /*
 The function clear the screen by deleting every character
 */
+void test() {
+    kprintf("%d,%d",x,y);
+}
+
 void clear_screen(void) {
 	//loop through all characteres
 	for(int i = 0; i < SCREEN_WIDTH*SCREEN_HEIGHT*2;i+= 2) {
