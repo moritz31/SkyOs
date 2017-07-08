@@ -104,7 +104,7 @@ void init_gdt(void) {
            "ljmp $0x8, $.1;"
            ".1:"
        );
-
+	   
 	//reload taskregister
 	asm volatile("ltr %%ax" : : "a" (5 << 3));
 }
@@ -178,7 +178,7 @@ static void idt_set_entry(int i, void (*fn)(), unsigned int selector, int flags)
 	Initalize idt and activate the interrupts
 */
 void init_idt(void) {
-	
+
 	struct {
 		uint16_t limit;
 		void* pointer;

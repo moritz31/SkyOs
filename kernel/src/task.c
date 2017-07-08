@@ -4,6 +4,7 @@
 #include "console.h"
 #include "task.h"
 #include "memorymanager.h"
+#include "paging.h"
 
 static struct task* first_task = NULL;
 static struct task* current_task = NULL;
@@ -28,8 +29,8 @@ void task_b() {
 
 struct task* init_task(void* entry) {
 	
-	uint8_t* stack =  (void*)alloc();
-	uint8_t* user_stack = (void*)alloc();
+	uint8_t* stack =  (void*)vmem_alloc();
+	uint8_t* user_stack = (void*)vmem_alloc();
 
 	//initalize an empty struct 
 	struct cpu_state new_state = {
@@ -53,7 +54,7 @@ struct task* init_task(void* entry) {
 	struct cpu_state* state = (void*) (stack + 4096 - sizeof(new_state));
 	*state = new_state;
 	
-	struct task* task = (void*) alloc();
+	struct task* task = (void*) vmem_alloc();
 	task->cpu_state = state;
 	task->next = first_task;
 	first_task = task;

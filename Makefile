@@ -11,7 +11,7 @@ CC = i686-elf-gcc
 LD = i686-elf-ld
 
 ASFLAGS = -m32
-CFLAGS = -m32 -Wall -g -fno-stack-protector -nostdinc -I$(INCLUDEDIR)
+CFLAGS =  -g -m32 -Wall -g -fno-stack-protector -nostdinc -I$(INCLUDEDIR)
 LDFLAGS = -melf_i386 -Tlinker.ld
 
 TARGET = kernel.elf
@@ -40,4 +40,4 @@ clean:
 
 .PHONY: debug
 debug: $(BINDIR)/$(TARGET)
-	qemu-system-i386 -m 256 -serial stdio -kernel $<
+	qemu-system-i386 -s -S -m 256 -kernel $<
