@@ -6,7 +6,6 @@
 #include "task.h"
 #include "memorymanager.h"
 #include "serial.h"
-#include "keyboard.h"
 #include "paging.h"
 
 void init(multiboot_info_t* mb_info, unsigned long magic)
@@ -31,10 +30,6 @@ void init(multiboot_info_t* mb_info, unsigned long magic)
         void* addr = vmem_alloc();
         kprintf("Virtual addr: %x\n",addr);
     }*/
-
-
-    
-    //init_keyboard();
 
     
     init_multitasking();

@@ -40,4 +40,6 @@ char readCharacter() {
 	if(get_lsb() & 1) {
 		return inb(PORT);
 	}
+
+	return '\0';
 }
