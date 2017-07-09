@@ -2,6 +2,9 @@
     "files.associations": {
         "stdint.h": "c",
         "keyboard.h": "c",
-        "paging.h": "c"
+        "paging.h": "c",
+        "multiboot.h": "c",
+        "task.h": "c",
+        "memorymanager.h": "c"
     }
 }

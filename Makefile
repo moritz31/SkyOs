@@ -40,4 +40,4 @@ clean:
 
 .PHONY: debug
 debug: $(BINDIR)/$(TARGET)
-	qemu-system-i386 -m 256 -kernel $<
+	qemu-system-i386 -m 256 -serial stdio -kernel $<

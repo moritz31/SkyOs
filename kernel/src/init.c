@@ -15,16 +15,16 @@ void init(multiboot_info_t* mb_info, unsigned long magic)
 
     //initalize the memory manager
     init_memory_manager(mb_info);
-    init_paging();
+    //init_paging();
     //clean the multiboot info after it isn't needed anymore
     mb_info = NULL;
 
-    kprintf("Initalizing GDT... ");
+    /*kprintf("Initalizing GDT... ");
     init_gdt();
     kprintf("[OK]\n");
     kprintf("Initalizing IDT... ");
     init_idt();
-    kprintf("[OK]\n");
+    kprintf("[OK]\n");*/
 
     /*for(int i = 0; i < 31; i++) {
         void* addr = vmem_alloc();
